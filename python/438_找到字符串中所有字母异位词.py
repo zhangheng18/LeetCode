@@ -1,30 +1,37 @@
+from collections import defaultdict
+
+
 class Solution:
     def findAnagrams(self, s: str, p: str) -> List[int]:
-        left, right = 0,0
-        windows = {i:0 for i in p}
+        left, right = 0, 0
+        need, windows = defaultdict(int), defaultdict(int)
 
-        res = []
-        need = {}
-        valid = 0
         for i in p:
-            need.setdefault(i, 0)
-            need[i] +=1
-        
+            need[i] += 1
+
+        valid = 0
+        res = []
+
         while right < len(s):
             c = s[right]
+            right += 1
+            # 扩大
             if c in need:
-                windows[c] +=1
-                if windows[c] == need[c]:
-                    valid +=1
-            right +=1
+                windows[c] += 1
+                if need[c] == windows[c]:
+                    valid += 1
 
-            while (right - left)>= len(p):
+            # 收缩
+            while right - left >= len(p):
+                #符合条件
                 if valid == len(need):
                     res.append(left)
-                d = s[left]
-                left+=1
-                if d in  need:
-                    if windows[d] == need[d]:
-                        valid -=1
-                    windows[d]-=1
+
+                c = s[left]
+                left += 1
+                if c in windows:
+                    if need[c] == windows[c]:
+                        valid -= 1
+                    windows[c] -= 1
+
         return res
