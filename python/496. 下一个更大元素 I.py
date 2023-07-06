@@ -1,20 +1,16 @@
 class Solution:
     def nextGreaterElement(self, nums1: List[int], nums2: List[int]) -> List[int]:
-        def next_max_element(nums):
-            # 查找下一个最大元组
-            stack = []
-            res = [-1] * len(nums)
-            for i in range(len(nums)):
-                while stack and nums[stack[-1]]< nums[i]:
-                    res[stack.pop()] = nums[i]
-                stack.append(i)
-            return res
-        # nums2 元素字典映射
-        next_nums2 = next_max_element(nums2)
-        next_dic = { nums2[i]:next_nums2[i] for i in range(len(nums2))}
+        stack = []
 
-        # nums1 最大元素
-        ans = []
-        for num in nums1:
-            ans.append( next_dic[num])
-        return ans
+        res_stack = {}
+        # 单调栈 查找下一个最大元素
+        for i in reversed(nums2):
+            while stack and stack[-1] < i:
+                stack.pop()
+
+            # 结果记录hash表
+            res_stack[i] = stack[-1] if stack else -1
+            stack.append(i)
+
+        # 获取nums1 的结果
+        return [ res_stack[i] for i in nums1]
